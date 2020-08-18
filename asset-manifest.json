@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/blackjack/static/js/main.2317e606.chunk.js",
-    "main.js.map": "/blackjack/static/js/main.2317e606.chunk.js.map",
+    "main.js": "/blackjack/static/js/main.6ee47eed.chunk.js",
+    "main.js.map": "/blackjack/static/js/main.6ee47eed.chunk.js.map",
     "runtime-main.js": "/blackjack/static/js/runtime-main.852dc962.js",
     "runtime-main.js.map": "/blackjack/static/js/runtime-main.852dc962.js.map",
     "static/js/2.65d91f46.chunk.js": "/blackjack/static/js/2.65d91f46.chunk.js",
     "static/js/2.65d91f46.chunk.js.map": "/blackjack/static/js/2.65d91f46.chunk.js.map",
     "index.html": "/blackjack/index.html",
-    "precache-manifest.bf0e2cb00fc7620d3ff5c9159e729406.js": "/blackjack/precache-manifest.bf0e2cb00fc7620d3ff5c9159e729406.js",
+    "precache-manifest.25a2c00387b7ee4fb882c15672914972.js": "/blackjack/precache-manifest.25a2c00387b7ee4fb882c15672914972.js",
     "service-worker.js": "/blackjack/service-worker.js",
     "static/js/2.65d91f46.chunk.js.LICENSE.txt": "/blackjack/static/js/2.65d91f46.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.852dc962.js",
     "static/js/2.65d91f46.chunk.js",
-    "static/js/main.2317e606.chunk.js"
+    "static/js/main.6ee47eed.chunk.js"
   ]
 }
