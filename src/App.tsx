@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { getRouteComponent } from "./pages/mapping";
 import { Routes, getUrl } from "./pages/routes";
 
@@ -32,7 +32,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router>
         <Switch>
           {Object.keys(Routes).map((routeKey) => {
             const route = Routes[(routeKey as any) as keyof typeof Routes];
