@@ -32,7 +32,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <Switch>
           {Object.keys(Routes).map((routeKey) => {
             const route = Routes[(routeKey as any) as keyof typeof Routes];
