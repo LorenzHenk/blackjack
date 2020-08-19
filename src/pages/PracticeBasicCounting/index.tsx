@@ -6,6 +6,8 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { Typography, Box, makeStyles } from "@material-ui/core";
 
+import { animated, useTransition } from "react-spring";
+
 function useDeck(deckAmount: number) {
   const [deck, setDeck] = useState(() =>
     createDeck({ cardAmountFactor: deckAmount })
@@ -74,6 +76,21 @@ function Runner() {
     setErrors(0);
   };
 
+  const transitions = useTransition(
+    currentCard,
+    (c) => (c ? c.suit + " " + c.value : "NO CARD LEFT"),
+    {
+      from: {
+        opacity: 0,
+        transform: "translate3d(100%,0,0)",
+        // absolute position needed for card positioning not to affect each other
+        position: "absolute",
+      },
+      enter: { opacity: 1, transform: "translate3d(-50%,0,0)" },
+      leave: { opacity: 0, transform: "translate3d(-200%,0,0)" },
+    }
+  );
+
   return (
     <>
       <Box display="flex" gridArea="statistics" flexDirection="column">
@@ -106,9 +123,11 @@ function Runner() {
             )}
           </Typography>
         ) : (
-          <div style={{ fontSize: "200px" }}>
-            {currentCard && getCardEmoji(currentCard)}
-          </div>
+          transitions.map(({ item, props, key }) => (
+            <animated.div key={key} style={{ ...props, fontSize: "200px" }}>
+              {item && getCardEmoji(item)}
+            </animated.div>
+          ))
         )}
       </Box>
       <Box gridArea="actions" paddingBottom={3}>
@@ -142,6 +161,8 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateAreas: `"heading" "statistics" "content" "actions"`,
     gridTemplateRows: `min-content min-content 1fr min-content`,
     justifyItems: "center",
+    // TODO find out how to hide scrollbars
+    overflow: "hidden",
   },
 }));
 
