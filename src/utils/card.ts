@@ -21,6 +21,8 @@ export enum Suit {
   Clubs,
 }
 
+const RED_SUITS = [Suit.Hearts, Suit.Diamonds];
+
 export interface Card {
   value: Value;
   suit: Suit;
@@ -36,4 +38,8 @@ export const PLAYING_CARD_BACK_EMOJI = String.fromCodePoint(PLAYING_CARD_BACK);
 
 export function getCardEmoji(card: Card) {
   return String.fromCodePoint(START_POINT + card.suit * STEP + card.value);
+}
+
+export function isRedCard(card: Card) {
+  return RED_SUITS.includes(card.suit);
 }

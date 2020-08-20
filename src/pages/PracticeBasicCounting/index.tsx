@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { getCardEmoji, Card } from "../../utils/card";
+import { getCardEmoji, Card, isRedCard } from "../../utils/card";
 import { createDeck } from "../../utils/deck";
 import { getDeckCountValue, getCardCountValue } from "../../utils/count";
 import Button from "@material-ui/core/Button";
@@ -17,7 +17,7 @@ function useDeck(deckAmount: number) {
 
   const nextCard = useCallback(() => setCurrentIndex((v) => v + 1), []);
 
-  const currentCard: Card | null = deck[currentIndex] || null;
+  const currentCard = (deck[currentIndex] || null) as Card | null;
 
   const finished = currentCard === null;
 
@@ -77,17 +77,24 @@ function Runner() {
   };
 
   const transitions = useTransition(
-    currentCard,
-    (c) => (c ? c.suit + " " + c.value : "NO CARD LEFT"),
+    { currentCard, cardCountValue },
+    ({ currentCard: c }) => (c ? c.suit + " " + c.value : "NO CARD LEFT"),
     {
       from: {
         opacity: 0,
-        transform: "translate3d(100%,0,0)",
+        transform: "translate3d(-50%,-50%,0)",
         // absolute position needed for card positioning not to affect each other
         position: "absolute",
       },
       enter: { opacity: 1, transform: "translate3d(-50%,0,0)" },
-      leave: { opacity: 0, transform: "translate3d(-200%,0,0)" },
+      leave: ({ cardCountValue: countValue }) => ({
+        opacity: 0,
+        transform: [
+          "translate3d(-200%,0,0)",
+          "translate3d(-50%,100%,0)",
+          "translate3d(150%,0,0)",
+        ][(countValue ?? 0) + 1],
+      }),
     }
   );
 
@@ -124,8 +131,26 @@ function Runner() {
           </Typography>
         ) : (
           transitions.map(({ item, props, key }) => (
-            <animated.div key={key} style={{ ...props, fontSize: "200px" }}>
-              {item && getCardEmoji(item)}
+            <animated.div
+              key={key}
+              style={{
+                ...props,
+              }}
+            >
+              {item.currentCard && (
+                <span
+                  style={{
+                    fontSize: "200px",
+                    color: isRedCard(item.currentCard) ? "red" : "black",
+                    background: "white",
+                    // only show background behind the card icon
+                    clipPath:
+                      "polygon(4px 19px, 127px 19px, 127px 203px, 4px 203px)",
+                  }}
+                >
+                  {getCardEmoji(item.currentCard)}
+                </span>
+              )}
             </animated.div>
           ))
         )}
