@@ -164,10 +164,6 @@ function Runner() {
                   style={{
                     fontSize: "200px",
                     color: isRedCard(item.currentCard) ? "red" : "black",
-                    background: "white",
-                    // only show background behind the card icon
-                    clipPath:
-                      "polygon(4px 28px, 127px 28px, 127px 212px, 4px 212px)",
                   }}
                 >
                   {getCardEmoji(item.currentCard)}
