@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { Typography, Box, makeStyles } from "@material-ui/core";
 
-import { animated, useTransition } from "react-spring";
+import { animated, useTransition, useSpring } from "react-spring";
 
 function useDeck(deckAmount: number) {
   const [deck, setDeck] = useState(() =>
@@ -70,7 +70,6 @@ function Runner() {
       nextCard();
     } else {
       increaseErrors();
-      alert("WRONG");
     }
   };
 
@@ -108,6 +107,13 @@ function Runner() {
       }),
     }
   );
+
+  const errorProps = useSpring({
+    o: errors % 2,
+    from: {
+      o: 0,
+    },
+  });
 
   return (
     <>
@@ -160,14 +166,25 @@ function Runner() {
               }}
             >
               {item.currentCard && (
-                <span
+                <animated.div
                   style={{
-                    fontSize: "200px",
-                    color: isRedCard(item.currentCard) ? "red" : "black",
+                    transform: errorProps.o
+                      .interpolate({
+                        range: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                        output: [0, -10, 10, -10, 10, 0],
+                      })
+                      .interpolate((o) => `translateX(${o.toPrecision(2)}%)`),
                   }}
                 >
-                  {getCardEmoji(item.currentCard)}
-                </span>
+                  <span
+                    style={{
+                      fontSize: "200px",
+                      color: isRedCard(item.currentCard) ? "red" : "black",
+                    }}
+                  >
+                    {getCardEmoji(item.currentCard)}
+                  </span>
+                </animated.div>
               )}
             </animated.div>
           ))
