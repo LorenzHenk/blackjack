@@ -1,5 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
+
+import "fontsource-roboto";
+
 import { getRouteComponent } from "./pages/mapping";
 import { Routes, getUrl } from "./pages/routes";
 
