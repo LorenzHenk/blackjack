@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { getCardEmoji, Card, isRedCard } from "../../utils/card";
 import { createDeck } from "../../utils/deck";
 import { getDeckCountValue, getCardCountValue } from "../../utils/count";
@@ -62,6 +62,9 @@ function Runner() {
   const [errors, setErrors] = useState(0);
   const increaseErrors = () => setErrors((err) => err + 1);
 
+  const [startTime, setStartTime] = useState(() => new Date());
+  const [endTime, setEndTime] = useState<Date | null>(null);
+
   const guessValue = (value: number) => () => {
     if (value === cardCountValue) {
       nextCard();
@@ -74,7 +77,15 @@ function Runner() {
   const reset = () => {
     resetDeck();
     setErrors(0);
+    setStartTime(new Date());
+    setEndTime(null);
   };
+
+  useEffect(() => {
+    if (finished) {
+      setEndTime(new Date());
+    }
+  }, [finished]);
 
   const transitions = useTransition(
     { currentCard, cardCountValue },
@@ -112,6 +123,17 @@ function Runner() {
         >
           {errors} mistakes made
         </Typography>
+
+        {finished && (
+          <Typography variant="body1" align="center">
+            You made it in{" "}
+            {endTime &&
+              ((endTime.getTime() - startTime.getTime()) / 1000).toPrecision(
+                2
+              )}{" "}
+            seconds
+          </Typography>
+        )}
       </Box>
       <Box gridArea="content" display="flex" alignItems="center">
         {finished ? (
@@ -145,7 +167,7 @@ function Runner() {
                     background: "white",
                     // only show background behind the card icon
                     clipPath:
-                      "polygon(4px 19px, 127px 19px, 127px 203px, 4px 203px)",
+                      "polygon(4px 28px, 127px 28px, 127px 212px, 4px 212px)",
                   }}
                 >
                   {getCardEmoji(item.currentCard)}
