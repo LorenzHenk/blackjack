@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { getCardEmoji, Card, isRedCard } from "../../utils/card";
+import { Card, PlayingCard } from "../../utils/card";
 import { createDeck } from "../../utils/deck";
 import { getDeckCountValue, getCardCountValue } from "../../utils/count";
 import Button from "@material-ui/core/Button";
@@ -69,7 +69,7 @@ interface Props {
   settings: Settings;
 }
 
-export function Runner(props: Props) {
+export function Runner({ settings, onReset }: Props) {
   const {
     cardCountValue,
     currentCard,
@@ -77,7 +77,7 @@ export function Runner(props: Props) {
     cardsDone,
     finished,
     nextCard,
-  } = useDeck(1);
+  } = useDeck(settings.deckCount);
 
   const classes = useStyles();
 
@@ -87,9 +87,14 @@ export function Runner(props: Props) {
   const [startTime] = useState(() => new Date());
   const [endTime, setEndTime] = useState<Date | null>(null);
 
+  const [rotation, setRotation] = useState(0);
+
   const guessValue = (value: number) => () => {
     if (!finished) {
       if (value === cardCountValue) {
+        if (settings.realLifeMode) {
+          setRotation(Math.round(Math.random() * 180));
+        }
         nextCard();
       } else {
         console.log(
@@ -101,7 +106,7 @@ export function Runner(props: Props) {
   };
 
   const reset = () => {
-    props.onReset();
+    onReset();
   };
 
   useEffect(() => {
@@ -137,6 +142,11 @@ export function Runner(props: Props) {
     from: {
       o: 0,
     },
+  });
+
+  const realLifeMode = useSpring({
+    r: rotation,
+    from: { r: 0 },
   });
 
   useHotkeys("right", guessValue(+1), [guessValue]);
@@ -204,14 +214,21 @@ export function Runner(props: Props) {
                       .interpolate((o) => `translateX(${o.toPrecision(2)}%)`),
                   }}
                 >
-                  <span
+                  <animated.div
                     style={{
-                      fontSize: "200px",
-                      color: isRedCard(item.currentCard) ? "red" : "black",
+                      transform: realLifeMode.r.interpolate(
+                        (r) => `rotate(${r}deg)`
+                      ),
                     }}
                   >
-                    {getCardEmoji(item.currentCard)}
-                  </span>
+                    <span
+                      style={{
+                        fontSize: "200px",
+                      }}
+                    >
+                      <PlayingCard card={item.currentCard} />
+                    </span>
+                  </animated.div>
                 </animated.div>
               )}
             </animated.div>

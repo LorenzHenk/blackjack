@@ -1,3 +1,5 @@
+import React from "react";
+
 export enum Value {
   Ace,
   Two,
@@ -38,6 +40,14 @@ export const PLAYING_CARD_BACK_EMOJI = String.fromCodePoint(PLAYING_CARD_BACK);
 
 export function getCardEmoji(card: Card) {
   return String.fromCodePoint(START_POINT + card.suit * STEP + card.value);
+}
+
+export function PlayingCard(props: { card: Card }) {
+  return (
+    <span style={{ color: isRedCard(props.card) ? "red" : "black" }}>
+      {getCardEmoji(props.card)}
+    </span>
+  );
 }
 
 export function isRedCard(card: Card) {

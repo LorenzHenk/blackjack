@@ -6,9 +6,11 @@ import {
   Typography,
   Checkbox,
   FormControlLabel,
+  Slider,
 } from "@material-ui/core";
-import { getCardEmoji, Suit } from "../../utils/card";
+import { PlayingCard, Suit } from "../../utils/card";
 import { CARD_TO_COUNT_VALUE_MAPPING } from "../../utils/count";
+import { Settings } from ".";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,16 +51,26 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-  onStart: (args: { realLifeMode: boolean }) => void;
+  onStart: (settings: Settings) => void;
 }
 
 function StartScreen(props: Props) {
   const classes = useStyles();
 
   const [realLifeMode, setRealLifeMode] = useState(false);
+  const [deckCount, setDeckCount] = useState(1);
+
+  const handleSliderChange = (
+    _event: React.ChangeEvent<{}>,
+    value: number | number[]
+  ) => {
+    if (typeof value === "number") {
+      setDeckCount(value);
+    }
+  };
 
   const handleStart = () => {
-    props.onStart({ realLifeMode });
+    props.onStart({ realLifeMode, deckCount });
   };
 
   return (
@@ -75,25 +87,26 @@ function StartScreen(props: Props) {
           <div className={classes.value}>-1</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.low.map((value) => (
-              <span>{getCardEmoji({ suit: Suit.Spades, value })}</span>
+              <PlayingCard card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
           <div className={classes.value}>0</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.neutral.map((value) => (
-              <span>{getCardEmoji({ suit: Suit.Spades, value })}</span>
+              <PlayingCard card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
           <div className={classes.value}>+1</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.high.map((value) => (
-              <span>{getCardEmoji({ suit: Suit.Spades, value })}</span>
+              <PlayingCard card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
         </Box>
       </Box>
 
       <Box gridArea="settings">
+        <Typography variant="h5">Settings</Typography>
         <FormControlLabel
           control={
             <Checkbox
@@ -104,6 +117,18 @@ function StartScreen(props: Props) {
             />
           }
           label="Real life mode"
+        />
+        <Typography id="discrete-slider" gutterBottom>
+          Amount of decks used
+        </Typography>
+        <Slider
+          value={deckCount}
+          onChange={handleSliderChange}
+          valueLabelDisplay="auto"
+          step={1}
+          marks
+          min={1}
+          max={8}
         />
       </Box>
       <Box gridArea="actions">

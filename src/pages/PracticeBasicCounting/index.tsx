@@ -7,10 +7,12 @@ import StartScreen from "./StartScreen";
 
 export interface Settings {
   realLifeMode: boolean;
+  deckCount: number;
 }
 
 export const initialSettings: Settings = {
   realLifeMode: false,
+  deckCount: 1,
 };
 
 export function PracticeBasicCounting() {
