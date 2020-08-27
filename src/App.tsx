@@ -8,6 +8,7 @@ import { Routes, getUrl } from "./pages/routes";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core";
+import Main from "./containers/Main";
 
 const theme = createMuiTheme({
   palette: {
@@ -25,6 +26,7 @@ const theme = createMuiTheme({
       "@global": {
         "html, body, #root": {
           height: "100%",
+          overflow: "hidden",
         },
       },
     },
@@ -36,17 +38,19 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Switch>
-          {Object.keys(Routes).map((routeKey) => {
-            const route = Routes[(routeKey as any) as keyof typeof Routes];
-            const RouteComponent = getRouteComponent(route);
-            return (
-              <Route exact key={route} path={getUrl(route)}>
-                <RouteComponent />
-              </Route>
-            );
-          })}
-        </Switch>
+        <Main>
+          <Switch>
+            {Object.keys(Routes).map((routeKey) => {
+              const route = Routes[(routeKey as any) as keyof typeof Routes];
+              const RouteComponent = getRouteComponent(route);
+              return (
+                <Route exact key={route} path={getUrl(route)}>
+                  <RouteComponent />
+                </Route>
+              );
+            })}
+          </Switch>
+        </Main>
       </Router>
     </ThemeProvider>
   );

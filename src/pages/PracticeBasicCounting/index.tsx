@@ -1,246 +1,42 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { getCardEmoji, Card, isRedCard } from "../../utils/card";
-import { createDeck } from "../../utils/deck";
-import { getDeckCountValue, getCardCountValue } from "../../utils/count";
-import Button from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import { Typography, Box, makeStyles } from "@material-ui/core";
+import React, { useState } from "react";
 
-import { animated, useTransition, useSpring } from "react-spring";
+import { Box, Typography } from "@material-ui/core";
 
-function useDeck(deckAmount: number) {
-  const [deck, setDeck] = useState(() =>
-    createDeck({ cardAmountFactor: deckAmount })
-  );
+import { Runner } from "./Game";
+import StartScreen from "./StartScreen";
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextCard = useCallback(() => setCurrentIndex((v) => v + 1), []);
-
-  const currentCard = (deck[currentIndex] || null) as Card | null;
-
-  const finished = currentCard === null;
-
-  const deckCountValueWithoutCurrentCard = getDeckCountValue(
-    deck.slice(0, currentIndex)
-  );
-
-  const cardCountValue = currentCard ? getCardCountValue(currentCard) : null;
-
-  const cardsLeft = deck.length - currentIndex;
-
-  const reset = () => {
-    setDeck(createDeck({ cardAmountFactor: deckAmount }));
-    setCurrentIndex(0);
-  };
-
-  return {
-    deck,
-    currentIndex,
-    nextCard,
-    currentCard,
-    finished,
-    deckCountValueWithoutCurrentCard,
-    cardCountValue,
-    cardsLeft,
-    cardsDone: currentIndex,
-    reset,
-  };
+export interface Settings {
+  realLifeMode: boolean;
 }
 
-function Runner() {
-  const {
-    cardCountValue,
-    currentCard,
-    cardsLeft,
-    cardsDone,
-    finished,
-    reset: resetDeck,
-    nextCard,
-  } = useDeck(1);
+export const initialSettings: Settings = {
+  realLifeMode: false,
+};
 
-  const [errors, setErrors] = useState(0);
-  const increaseErrors = () => setErrors((err) => err + 1);
+export function PracticeBasicCounting() {
+  const [started, setStarted] = useState(false);
 
-  const [startTime, setStartTime] = useState(() => new Date());
-  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [settings, setSettings] = useState<Settings>(initialSettings);
 
-  const guessValue = (value: number) => () => {
-    if (value === cardCountValue) {
-      nextCard();
-    } else {
-      increaseErrors();
-    }
+  const handleStart = (settings: Settings) => {
+    setSettings(settings);
+    setStarted(true);
   };
 
-  const reset = () => {
-    resetDeck();
-    setErrors(0);
-    setStartTime(new Date());
-    setEndTime(null);
-  };
-
-  useEffect(() => {
-    if (finished) {
-      setEndTime(new Date());
-    }
-  }, [finished]);
-
-  const transitions = useTransition(
-    { currentCard, cardCountValue },
-    ({ currentCard: c }) => (c ? c.suit + " " + c.value : "NO CARD LEFT"),
-    {
-      from: {
-        opacity: 0,
-        transform: "translate3d(-50%,-50%,0)",
-        // absolute position needed for card positioning not to affect each other
-        position: "absolute",
-      },
-      enter: { opacity: 1, transform: "translate3d(-50%,0,0)" },
-      leave: ({ cardCountValue: countValue }) => ({
-        opacity: 0,
-        transform: [
-          "translate3d(-200%,0,0)",
-          "translate3d(-50%,100%,0)",
-          "translate3d(150%,0,0)",
-        ][(countValue ?? 0) + 1],
-      }),
-    }
-  );
-
-  const errorProps = useSpring({
-    o: errors % 2,
-    from: {
-      o: 0,
-    },
-  });
+  const handleReset = () => setStarted(false);
 
   return (
     <>
-      <Box display="flex" gridArea="statistics" flexDirection="column">
-        <Typography variant="body1" align="center">
-          {finished ? <>{cardsDone} cards done</> : <>{cardsLeft} cards left</>}
-        </Typography>
-
-        <Typography
-          variant="body1"
-          align="center"
-          color={errors ? "error" : "initial"}
-        >
-          {errors} mistakes made
-        </Typography>
-
-        {finished && (
-          <Typography variant="body1" align="center">
-            You made it in{" "}
-            {endTime &&
-              ((endTime.getTime() - startTime.getTime()) / 1000).toPrecision(
-                2
-              )}{" "}
-            seconds
-          </Typography>
-        )}
-      </Box>
-      <Box gridArea="content" display="flex" alignItems="center">
-        {finished ? (
-          <Typography variant="h5" align="center">
-            {errors === 0 ? (
-              <>
-                AWESOME, you made 0 mistakes
-                <span role="img" aria-label="well done">
-                  🎉
-                </span>
-              </>
-            ) : (
-              <>
-                You need to practice {errors < 2 ? "a little bit " : ""}more 😉
-              </>
-            )}
-          </Typography>
-        ) : (
-          transitions.map(({ item, props, key }) => (
-            <animated.div
-              key={key}
-              style={{
-                ...props,
-              }}
-            >
-              {item.currentCard && (
-                <animated.div
-                  style={{
-                    transform: errorProps.o
-                      .interpolate({
-                        range: [0, 0.2, 0.4, 0.6, 0.8, 1],
-                        output: [0, -10, 10, -10, 10, 0],
-                      })
-                      .interpolate((o) => `translateX(${o.toPrecision(2)}%)`),
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "200px",
-                      color: isRedCard(item.currentCard) ? "red" : "black",
-                    }}
-                  >
-                    {getCardEmoji(item.currentCard)}
-                  </span>
-                </animated.div>
-              )}
-            </animated.div>
-          ))
-        )}
-      </Box>
-      <Box gridArea="actions" paddingBottom={3}>
-        {finished ? (
-          <Button onClick={reset} variant="contained" color="primary">
-            Practice again
-          </Button>
-        ) : (
-          <ButtonGroup variant="contained" disableElevation color="primary">
-            <Button disabled={finished} onClick={guessValue(-1)}>
-              -
-            </Button>
-            <Button disabled={finished} onClick={guessValue(0)}>
-              0
-            </Button>
-            <Button disabled={finished} onClick={guessValue(1)}>
-              +
-            </Button>
-          </ButtonGroup>
-        )}
-      </Box>
-    </>
-  );
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "grid",
-    height: "100%",
-    padding: theme.spacing(),
-    gridTemplateAreas: `"heading" "statistics" "content" "actions"`,
-    gridTemplateRows: `min-content min-content 1fr min-content`,
-    justifyItems: "center",
-    // TODO find out how to hide scrollbars
-    overflow: "hidden",
-  },
-}));
-
-export function PracticeBasicCounting() {
-  const classes = useStyles();
-  return (
-    <div className={classes.root}>
-      <Box gridArea="heading">
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-          style={{ gridArea: "heading" }}
-        >
+      <Box>
+        <Typography variant="h4" align="center" gutterBottom>
           Practice Basic Counting
         </Typography>
       </Box>
-      <Runner />
-    </div>
+      {started ? (
+        <Runner onReset={handleReset} settings={settings} />
+      ) : (
+        <StartScreen onStart={handleStart} />
+      )}
+    </>
   );
 }
