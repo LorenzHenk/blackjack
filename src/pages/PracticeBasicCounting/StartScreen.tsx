@@ -84,7 +84,7 @@ function StartScreen(props: Props) {
           Card to mental counter - mapping
         </Typography>
         <Box className={classes.rules}>
-          <div className={classes.value}>-1</div>
+          <div className={classes.value}>+1</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.low.map((value) => (
               <PlayingCard card={{ suit: Suit.Spades, value }} />
@@ -96,7 +96,7 @@ function StartScreen(props: Props) {
               <PlayingCard card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
-          <div className={classes.value}>+1</div>
+          <div className={classes.value}>-1</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.high.map((value) => (
               <PlayingCard card={{ suit: Suit.Spades, value }} />
