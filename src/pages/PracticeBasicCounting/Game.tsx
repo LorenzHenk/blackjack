@@ -174,6 +174,14 @@ export function Runner({ settings, onReset }: Props) {
           {errors} mistakes made
         </Typography>
 
+        {!finished && (
+          <Box color="error.main" display="flex" justifyContent="center">
+            <Button color="inherit" variant="outlined" onClick={reset}>
+              Give up
+            </Button>
+          </Box>
+        )}
+
         {finished && (
           <Typography variant="body1" align="center">
             You made it in{" "}
