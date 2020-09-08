@@ -51,6 +51,10 @@ function useDeck(deckAmount: number) {
   };
 }
 
+function randomRotation(): number {
+  return Math.round(Math.random() * 180);
+}
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "grid",
@@ -87,13 +91,15 @@ export function Runner({ settings, onReset }: Props) {
   const [startTime] = useState(() => new Date());
   const [endTime, setEndTime] = useState<Date | null>(null);
 
-  const [rotation, setRotation] = useState(0);
+  const [rotation, setRotation] = useState(
+    settings.realLifeMode ? randomRotation : 0
+  );
 
   const guessValue = (value: number) => () => {
     if (!finished) {
       if (value === cardCountValue) {
         if (settings.realLifeMode) {
-          setRotation(Math.round(Math.random() * 180));
+          setRotation(randomRotation);
         }
         nextCard();
       } else {
