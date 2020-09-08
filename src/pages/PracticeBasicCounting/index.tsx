@@ -8,11 +8,13 @@ import StartScreen from "./StartScreen";
 export interface Settings {
   realLifeMode: boolean;
   deckCount: number;
+  askForCurrentCount: boolean;
 }
 
 export const initialSettings: Settings = {
   realLifeMode: false,
   deckCount: 1,
+  askForCurrentCount: false,
 };
 
 export function PracticeBasicCounting() {

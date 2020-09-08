@@ -58,6 +58,7 @@ function StartScreen(props: Props) {
   const classes = useStyles();
 
   const [realLifeMode, setRealLifeMode] = useState(false);
+  const [askForCurrentCount, setAskForCurrentCount] = useState(false);
   const [deckCount, setDeckCount] = useState(1);
 
   const handleSliderChange = (
@@ -70,7 +71,7 @@ function StartScreen(props: Props) {
   };
 
   const handleStart = () => {
-    props.onStart({ realLifeMode, deckCount });
+    props.onStart({ realLifeMode, deckCount, askForCurrentCount });
   };
 
   return (
@@ -129,6 +130,17 @@ function StartScreen(props: Props) {
           marks
           min={1}
           max={8}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={askForCurrentCount}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setAskForCurrentCount(event.target.checked)
+              }
+            />
+          }
+          label="Ask for current total count while playing"
         />
       </Box>
       <Box gridArea="actions">

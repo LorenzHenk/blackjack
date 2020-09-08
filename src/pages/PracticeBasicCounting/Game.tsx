@@ -10,6 +10,7 @@ import { animated, useTransition, useSpring } from "react-spring";
 
 import { useHotkeys } from "react-hotkeys-hook";
 import { Settings } from ".";
+import { CurrentCountDialog } from "./CurrentCountDialog";
 
 function useDeck(deckAmount: number) {
   const [deck, setDeck] = useState(() =>
@@ -55,6 +56,12 @@ function randomRotation(): number {
   return Math.round(Math.random() * 180);
 }
 
+const ASK_PROBABILITY = 0.05;
+
+function randomShouldAskForCurrentCount(): boolean {
+  return Math.random() < ASK_PROBABILITY;
+}
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "grid",
@@ -76,6 +83,7 @@ interface Props {
 export function Runner({ settings, onReset }: Props) {
   const {
     cardCountValue,
+    deckCountValueWithoutCurrentCard,
     currentCard,
     cardsLeft,
     cardsDone,
@@ -95,11 +103,18 @@ export function Runner({ settings, onReset }: Props) {
     settings.realLifeMode ? randomRotation : 0
   );
 
+  const [shouldAskForCurrentCount, setShouldAskForCurrentCount] = useState(
+    settings.askForCurrentCount ? randomShouldAskForCurrentCount : false
+  );
+
   const guessValue = (value: number) => () => {
     if (!finished) {
       if (value === cardCountValue) {
         if (settings.realLifeMode) {
           setRotation(randomRotation);
+        }
+        if (settings.askForCurrentCount) {
+          setShouldAskForCurrentCount(randomShouldAskForCurrentCount());
         }
         nextCard();
       } else {
@@ -273,6 +288,13 @@ export function Runner({ settings, onReset }: Props) {
           </ButtonGroup>
         )}
       </Box>
+
+      {shouldAskForCurrentCount && (
+        <CurrentCountDialog
+          onClose={() => setShouldAskForCurrentCount(false)}
+          correctValue={deckCountValueWithoutCurrentCard}
+        />
+      )}
     </div>
   );
 }
