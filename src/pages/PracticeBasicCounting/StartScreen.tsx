@@ -87,19 +87,19 @@ function StartScreen(props: Props) {
           <div className={classes.value}>+1</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.low.map((value) => (
-              <PlayingCard card={{ suit: Suit.Spades, value }} />
+              <PlayingCard key={value} card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
           <div className={classes.value}>0</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.neutral.map((value) => (
-              <PlayingCard card={{ suit: Suit.Spades, value }} />
+              <PlayingCard key={value} card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
           <div className={classes.value}>-1</div>
           <div className={classes.cards}>
             {CARD_TO_COUNT_VALUE_MAPPING.high.map((value) => (
-              <PlayingCard card={{ suit: Suit.Spades, value }} />
+              <PlayingCard key={value} card={{ suit: Suit.Spades, value }} />
             ))}
           </div>
         </Box>
