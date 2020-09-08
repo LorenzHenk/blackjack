@@ -44,7 +44,12 @@ export function getCardEmoji(card: Card) {
 
 export function PlayingCard(props: { card: Card }) {
   return (
-    <span style={{ color: isRedCard(props.card) ? "red" : "black" }}>
+    <span
+      style={{
+        color: isRedCard(props.card) ? "red" : "black",
+        userSelect: "none",
+      }}
+    >
       {getCardEmoji(props.card)}
     </span>
   );
